@@ -6,7 +6,8 @@
 <% end %>
 
 <form action="/posts" method="post" enctype="multipart/form-data"> <!--/postsが送信先-->
-<input type="hidden" name="name" value="<%= session[:user]["name"] %>">
+<input type="hidden" name="name" value="<%= session[:user]["name"] %>"> 
+<!---ログインユーザーの名前を自動設定 session[:user]["name"]ここはログインユーザーの名前-->
 
   <div>
     <label for="content">投稿内容: </label>
@@ -18,7 +19,7 @@
 </form>
 
 <% @posts.each do |post| %> <!--配列の各要素を順番に処理-->
-  <h2><%= post['name'] %></h2>
+  <h2><%= post['name'] %></h2> <!--画面にログインユーザーの名前表示-->
   <p><%= post['content'] %></p> <!--投稿内容を出力-->
   <img src="/images/<%= post['image_path'] %>" alt=""> <!--画像パスの動的生成-->
 <% end %>

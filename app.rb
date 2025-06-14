@@ -19,7 +19,7 @@ get '/posts' do
 end
 
 post '/posts' do
-  name = params[:name] #投稿者名
+  name = params[:name] #session[:user]["name"]由来。ログインしてるユーザー名
   content = params[:content] #投稿内容(textareaで入力された投稿内容)
 
   image_path = '' #DBに投稿を保存
