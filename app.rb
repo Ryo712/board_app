@@ -10,19 +10,19 @@ client = PG::connect(
   :dbname => "board")
 
 get '/posts' do
-  if session[:user].nil?
-    return redirect '/login'
+  if session[:user].nil? #ユーザーが登録されてなければ/loginにリダイレクト
+    return redirect '/login' 
   end
   
-  @posts = client.exec_params("SELECT * from posts").to_a
-  erb :posts
+  @posts = client.exec_params("SELECT * from posts").to_a #postsから全ての投稿を取得。.to_aで結果を配列に変換
+  erb :posts #posts.erbを表示
 end
 
 post '/posts' do
-  name = params[:name]
-  content = params[:content]
+  name = params[:name] #投稿者名
+  content = params[:content] #投稿内容(textareaで入力された投稿内容)
 
-  image_path = ''
+  image_path = '' #DBに投稿を保存
   if !params[:img].nil? # データがあれば処理を続行する
     tempfile = params[:img][:tempfile] # ファイルがアップロードされた場所
     save_to = "./public/images/#{params[:img][:filename]}" # ファイルを保存したい場所
@@ -35,7 +35,7 @@ post '/posts' do
     [name, content, image_path]
   )
 
-  redirect '/posts'
+  redirect '/posts' #一覧ページにリダイレクト
 end
 
 get '/signup' do
@@ -56,27 +56,27 @@ post '/signup' do
 end
 
 get '/login' do
-  erb :login
+  erb :login #login.erbを表示
 end
 
 post '/login' do
   email = params[:email]
   password = params[:password]
 
-  user = client.exec_params(
+  user = client.exec_params( #WHERE句でemail AND passwordの完全一致を検索
     "SELECT * FROM users WHERE email = $1 AND password = $2 LIMIT 1",
     [email, password]
   ).to_a.first
 
   if user.nil?
-    return erb :login
+    return erb :login #ログイン失敗時(ユーザーがいない)場合login.erbにリダイレクト
   end
 
-  session[:user] = user
+  session[:user] = user #ユーザー情報をセッションに保存
   redirect '/posts'
 end
 
-delete '/logout' do
-  session[:user] = nil
-  redirect '/login'
+delete '/logout' do 
+  session[:user] = nil #セッションからユーザー情報を削除
+  redirect '/login' #ログインページにリダイレクト
 end
